@@ -1,5 +1,6 @@
-#[derive(Debug)]
 struct Instruction {
+    // data structure to represent a single instruction
+    // (Current state, Current char) -> (Next state, New char, Move direction)
     current_state: String,
     current_char: char,
     next_state: String,
@@ -8,6 +9,7 @@ struct Instruction {
 }
 
 impl Instruction {
+    // constructor implementation
     fn new(current_state: String, current_char: char, next_state: String, new_char: char, move_direction: i32) -> Self {
         Self {
             current_state,
@@ -19,8 +21,8 @@ impl Instruction {
     }
 }
 
-#[derive(Debug)]
 struct TuringMachine {
+    // data structure to represent a Turing machine with a simple tape
     description: String,
     instructions: Vec<Instruction>,
     initial_state: String,
@@ -28,6 +30,7 @@ struct TuringMachine {
 }
 
 impl TuringMachine {
+    // constructor implementation
     fn new(description: String, instructions: Vec<Instruction>, initial_state: String, final_states: Vec<String>) -> Self {
         Self {
             description,
@@ -37,6 +40,7 @@ impl TuringMachine {
         }
     }
 
+    // simulate the Turing machine
     fn simulate(&self, input: &str) {
         let mut tape: Vec<char> = vec!['b'];
         tape.extend(input.chars());
@@ -55,8 +59,6 @@ impl TuringMachine {
 
         while !self.final_states.contains(&current_state) {
             let current_char = tape[head_pos];
-            
-            
 
             let instruction = match self.instructions.iter().find(|i| i.current_state == current_state && i.current_char == current_char) {
                 Some(inst) => inst,
@@ -72,6 +74,7 @@ impl TuringMachine {
             current_state = instruction.next_state.clone();
             head_pos = (head_pos as i32 + instruction.move_direction) as usize;
 
+            // if the head is at the end of the tape, add a new blank char
             if head_pos == tape.len() {
                 tape.push('b');
             }
@@ -91,7 +94,13 @@ impl TuringMachine {
     }
 }
 
+// examples
 fn main() {
+    //
+    // EXAMPLE 1
+    //  
+
+    // make a machine that flips the bits of a binary input
     let instructions = vec![
         Instruction::new("Q0".to_string(), '0', "Q0".to_string(), '1', 1),
         Instruction::new("Q0".to_string(), '1', "Q0".to_string(), '0', 1),
@@ -110,10 +119,15 @@ fn main() {
     let input = "1101";
     turing_machine.simulate(input);
 
-    let input = "101";
-    turing_machine.simulate(input);
+    let input2 = "101";
+    turing_machine.simulate(input2);
+
+    //
+    // EXAMPLE 2
+    //  
 
     // make a machine that does "For word w return ww"
+    // more compact version of declaring the machine
     let tm2 = TuringMachine::new(
         "For word w returns ww".to_string(),
         vec![
